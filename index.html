@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIRANKARI SANT SAMAGAM TICKET</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{background:#f0f2f5;padding:6px;padding-bottom:40px}
+.top-bar{position:sticky;top:0;background:#f0f2f5;padding:4px 0;z-index:100;display:flex;justify-content:flex-end;align-items:center;gap:6px}
+.icon-btn{background:#082845;color:#fff;border:0;width:28px;height:28px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px #0003}
+.icon-btn.saving{background:#198754;color:#fff}
+.icon-btn:disabled{opacity:.4;cursor:not-allowed}
+.search-container{display:none;flex:1;align-items:center;position:relative}
+.search-container.active{display:flex}
+.search-input{width:100%;padding:5px 24px 5px 8px;font-size:11px;border:1.5px solid #082845;border-radius:14px;outline:0;background:#fff}
+.search-close{position:absolute;right:8px;background:0;border:0;font-size:11px;color:#666}
+.header{text-align:center;margin-bottom:6px}
+.header h1{color:#0b3d2b;font-size:13px;font-weight:800}
+.header .subtext{font-size:7.5px;color:#444;font-weight:600;margin-top:2px}
+.train-bar{background:#eef7f2;border:1px solid #137748;padding:3px 6px;font-size:7.5px;font-weight:700;color:#0b4f2c;margin-top:4px;text-align:center;border-radius:2px}
+.train-bar.return{background:#fff2e6;border-color:#c4560c;color:#8a3a00}
+.status-bar{font-size:8px;margin:4px 0;text-align:center;font-weight:700}
+.status-online{color:#137748}.status-offline{color:#b71515}
+.group-card{margin-bottom:8px;border:1px solid #082845;background:#fff;box-shadow:0 1px 2px #0000000d}
+.group-card.return-card{border-color:#c4560c}
+.group-card.return-card .group-header{background:#c4560c}
+.group-header{background:#082845;color:#fff;padding:3px 6px;display:flex;justify-content:space-between;align-items:center;font-size:8.5px;font-weight:700;flex-wrap:wrap;gap:4px}
+.table-container{overflow-x:auto;width:100%}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th{background:#fff;color:#222;font-size:7px;border:1px solid #d9d9d9;padding:3px 2px;text-align:center;font-weight:700}
+td{border:1px solid #e0e0e0;font-size:7.5px;padding:3px 2px;text-align:center;color:#222;outline:0}
+.name-col{text-align:left;padding-left:5px;font-weight:600;white-space:nowrap}
+.row-green{background:#ebfaeb}
+.badge-paid{background:#b8f2c8;color:#055026;padding:1px 5px;border-radius:2px;font-weight:700;font-size:7px;display:inline-block}
+.badge-due{background:#ffc9cb;color:#b71515;padding:1px 4px;border-radius:2px;font-weight:800;font-size:6.5px;display:block;margin:1px auto;width:fit-content}
+.badge-berth{background:#d0e4ff;color:#0c4a8a;border:1px solid #a8cdff;padding:1px 4px;border-radius:2px;font-weight:700;font-size:7px;display:inline-block}
+.badge-rac{background:#ffe4b5;color:#8a5a00;border:1px solid #f0c060;padding:1px 4px;border-radius:2px;font-weight:700;font-size:7px;display:inline-block}
+.badge-wl{background:#f0d0d0;color:#8a1a1a;border:1px solid #d09090;padding:1px 4px;border-radius:2px;font-weight:700;font-size:7px;display:inline-block}
+.edit-mode-active td[data-editable="true"]{background:#fffbe6!important;cursor:text;border:1px dashed #d4b106}
+.tabs{display:flex;gap:0;justify-content:center;margin:8px 0;border:1.5px solid #082845;border-radius:10px;overflow:hidden;width:fit-content;margin-left:auto;margin-right:auto}
+.tab-btn{background:#fff;color:#082845;border:0;padding:8px 16px;font-size:11px;font-weight:800;cursor:pointer;transition:all .2s}
+.tab-btn.active-going{background:#082845;color:#fff}
+.tab-btn.active-return{background:#c4560c;color:#fff}
+.hidden{display:none!important}
+.filter-btn{border:1px solid #082845;background:#fff;color:#082845;border-radius:12px;padding:3px 8px;font-size:8px;font-weight:700}
+.active-filter{background:#082845;color:#fff}
+.pnr-cell{cursor:pointer}
+.pnr-link{color:#0645ad;text-decoration:underline;font-weight:800;cursor:pointer}
+.pnr-cell:hover .pnr-link{opacity:.75}
+mark.search-hl{background:#ffe066;color:#000;padding:0 1px;border-radius:2px}
+.offline-banner{position:sticky;top:0;z-index:999;background:#b71515;color:#fff;text-align:center;font-size:11px;font-weight:700;padding:6px 8px;box-shadow:0 2px 6px #0003;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* === Login Overlay === */
+#loginOverlay{position:fixed;inset:0;background:#f0f2f5ee;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{width:min(360px,100%);background:#fff;border:1px solid #082845;border-radius:12px;padding:20px;box-shadow:0 5px 25px #0002}
+.login-box h2{text-align:center;color:#082845;font-size:18px;margin-bottom:5px}
+.login-box p{text-align:center;color:#666;font-size:11px;margin-bottom:16px}
+.login-box input{width:100%;padding:11px;margin:5px 0;border:1px solid #bbb;border-radius:7px;font-size:13px;outline:0}
+.pwd-wrap{position:relative;width:100%;margin:5px 0}
+.pwd-wrap input{margin:0;padding-right:42px}
+.pwd-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:transparent;border:0;font-size:16px;cursor:pointer;padding:4px 8px;line-height:1}
+.login-btn{width:100%;padding:11px;border:0;border-radius:7px;background:#082845;color:#fff;font-weight:700;margin-top:8px;cursor:pointer}
+.login-msg{text-align:center;font-size:11px;margin-top:10px;color:#b71515;min-height:16px}
+
+@media print {
+  body{background:#fff;padding:0}
+  .top-bar,#filterBar,#tabsContainer,#modeStatus,#loginOverlay,.icon-btn,.filter-btn,.search-container,#loadingIndicator,.offline-banner{display:none !important}
+  .header h1{font-size:14pt}
+  .group-card{page-break-inside:avoid;border:1px solid #000;margin-bottom:10px;box-shadow:none}
+  .group-header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table{min-width:100%;font-size:8pt}
+  th,td{border:1px solid #000;padding:3px 4px}
+  .row-green,.badge-paid,.badge-due,.badge-berth,.badge-rac,.badge-wl{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div id="offlineBanner" class="offline-banner hidden">
+  ⚠️ आप Offline हैं — data सिर्फ इस device में save होगा
+</div>
+
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay" class="hidden">
+  <div class="login-box">
+    <h2>🔐 Admin Login</h2>
+    <p>Edit Mode के लिए Admin Login करें</p>
+    <input id="email" type="email" placeholder="Admin Email" autocomplete="username">
+    <div class="pwd-wrap">
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      <button type="button" id="togglePwdBtn" class="pwd-toggle" onclick="togglePassword()" title="Show/Hide password">👁️</button>
+    </div>
+    <button class="login-btn" onclick="login()">LOGIN</button>
+    <button class="login-btn" style="background:#777;margin-top:6px" onclick="closeLogin()">CANCEL</button>
+    <div id="loginMsg" class="login-msg"></div>
+  </div>
+</div>
+
+<div class="top-bar">
+  <div id="searchContainer" class="search-container">
+    <input type="text" id="searchBar" class="search-input" placeholder="खोजें..." oninput="filterTable()">
+    <button class="search-close" onclick="toggleSearch(false)">✖</button>
+  </div>
+  <button id="searchToggleBtn" class="icon-btn" title="Search" onclick="toggleSearch()">🔍</button>
+  <button class="icon-btn" title="Print" onclick="window.print()">🖨️</button>
+  <button id="globalEditBtn" class="icon-btn" title="Edit Mode" onclick="toggleGlobalEdit()">✏️</button>
+</div>
+
+<div class="header">
+  <h1>NIRANKARI SANT SAMAGAM TICKET 18/10/2026</h1>
+  <div class="subtext">NAME / DOB / GENDER / AGE / MOBILE NO. / PAYMENT / PNR / COACH &amp; BERTH</div>
+  <div id="goingTrainBar" class="train-bar">
+    🚂 Going: Train 12557 / SAPT KRANTI EXP | BETTIAH (BTH) → ANAND VIHAR TRM (ANVT) | 18-Oct-2026, 13:58 → 19-Oct-2026, 07:40 | 937 KM
+  </div>
+  <div id="returnTrainBar" class="train-bar return hidden">
+    🔙 Return: Train 15274 / SATYAGRAH EXP | ANAND VIHAR TRM (ANVT) → BETTIAH (BTH) | 28-Oct-2026, 17:30 → 29-Oct-2026, 15:10 | 906 KM
+  </div>
+  <div id="modeStatus" class="status-bar">👁️ VIEW MODE</div>
+  <div id="syncStatus" class="status-bar">Firebase connecting...</div>
+  <div id="lastUpdated" class="status-bar" style="font-size:7px;color:#666">Last updated: —</div>
+</div>
+
+<div id="tabsContainer" class="tabs">
+  <button id="tabGoing" class="tab-btn active-going" onclick="switchTab('going')">🚂 जाने का</button>
+  <button id="tabReturn" class="tab-btn" onclick="switchTab('return')">🔙 आने का</button>
+</div>
+
+<div id="filterBar" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:5px 0">
+  <button class="filter-btn active-filter" onclick="setFilter('ALL',this)">ALL</button>
+  <button class="filter-btn" onclick="setFilter('PAID',this)">PAID</button>
+  <button class="filter-btn" onclick="setFilter('DUE',this)">DUE</button>
+  <button class="filter-btn" onclick="setFilter('PNR',this)">PNR</button>
+  <button class="filter-btn" onclick="setFilter('BERTH',this)">BERTH</button>
+  <button class="filter-btn" onclick="setFilter('EMPTY',this)">EMPTY</button>
+</div>
+
+<div id="loadingIndicator" style="text-align:center;padding:40px 20px;color:#082845;font-size:14px;font-weight:700">
+  <div style="font-size:32px;margin-bottom:10px">⏳</div>
+  Loading tickets... कृपया रुकें
+</div>
+
+<div id="groupsContainer"></div>
+
+<script>
+  /* ============================================================
+   FIREBASE CONFIG
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCZE4brKmkBmcWagHZSCMcTPPNdk-mT9LA",
+  authDomain: "nirankari-samagam-2026-d0187.firebaseapp.com",
+  databaseURL: "https://nirankari-samagam-2026-d0187-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "nirankari-samagam-2026-d0187",
+  storageBucket: "nirankari-samagam-2026-d0187.firebasestorage.app",
+  messagingSenderId: "405412802178",
+  appId: "1:405412802178:web:5c4bc4b59fa30a2391ce9b"
+};
+
+const FIREBASE_DB_URL = firebaseConfig.databaseURL;
+const AUTH_SIGNIN_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + firebaseConfig.apiKey;
+const AUTH_REFRESH_URL = "https://securetoken.googleapis.com/v1/token?key=" + firebaseConfig.apiKey;
+
+const SYNC_INTERVAL_MS = 10000;
+const TOKEN_EXPIRY_BUFFER_MS = 60000;
+const URL_REVOKE_DELAY_MS = 1000;
+
+/* ============================================================
+   GLOBAL VARIABLES
+   ============================================================ */
+let currentUser = null;
+let authSession = JSON.parse(localStorage.getItem("nirankari_auth_session") || "null");
+let firebaseReady = false;
+let syncTimer = null;
+let isEditMode = false;
+let activeFilter = "ALL";
+let activeTab = "going";
+let currentData = { going: [], return: [] };
+let undoStack = [];
+let redoStack = [];
+let lastRenderedJSON = "";
+
+/* ============================================================
+   GOING DATA — जाने का (Train 12557 SAPT KRANTI EXP)
+   ============================================================ */
+const goingData = [
+{group:"GROUP 1 (PNR 6208235902)",members:[
+{sl:1,name:"Yogendra Prasad (योगेन्द्र प्रसाद)",dob:"01-01-1970",gender:"Male",mobile:"-",pay:"PAID",pnr:"6208235902",berth:"S2 / 73 / LB"},
+{sl:2,name:"Purnima Devi (पूर्णिमा देवी)",dob:"01-01-1998",gender:"Female",mobile:"-",pay:"PAID",pnr:"6208235902",berth:"S2 / 74 / MB"},
+{sl:3,name:"Ujwal Kumar (उज्जवल कुमार)",dob:"01-01-2011",gender:"Male",mobile:"-",pay:"PAID",pnr:"6208235902",berth:"S2 / 75 / UB"},
+{sl:4,name:"Kriti Kumari (कृति कुमारी)",dob:"01-01-2007",gender:"Female",mobile:"-",pay:"PAID",pnr:"6208235902",berth:"S2 / 76 / LB"},
+{sl:5,name:"Geeta Devi (गीता देवी)",dob:"01-01-1994",gender:"Female",mobile:"-",pay:"PAID",pnr:"6208235902",berth:"S2 / 77 / MB"},
+{sl:6,name:"Saroj Kumari (सरोज कुमारी)",dob:"01-01-2013",gender:"Female",mobile:"-",pay:"PAID",pnr:"6208235902",berth:"S2 / 78 / UB"}]},
+{group:"GROUP 2 (PNR 6708234780)",members:[
+{sl:1,name:"Rakesh Kumar (राकेश कुमार)",dob:"01-01-1998",gender:"Male",mobile:"-",pay:"PAID",pnr:"6708234780",berth:"S2 / 58 / MB"},
+{sl:2,name:"Rita Devi (रीता देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234780",berth:"S2 / 60 / LB"},
+{sl:3,name:"Rima Devi (रीमा देवी)",dob:"28-03-2001",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234780",berth:"S2 / 59 / UB"},
+{sl:4,name:"Sanju Devi (संजू देवी)",dob:"01-01-1990",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234780",berth:"S2 / 61 / MB"},
+{sl:5,name:"Rimjhim Kumari (रिमझिम कुमारी)",dob:"03-03-2009",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234780",berth:"S2 / 62 / UB"},
+{sl:6,name:"Sharda Devi (शारदा देवी)",dob:"01-01-1991",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234780",berth:"S2 / 64 / SU"}]},
+{group:"GROUP 3 (PNR 6836641861)",members:[
+{sl:1,name:"Urmila Devi (उर्मिला देवी)",dob:"01-01-1961",gender:"Female",mobile:"-",pay:"PAID",pnr:"6836641861",berth:"S5 / 76 / LOWER"},
+{sl:2,name:"Rambha Devi (रंभा देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"6836641861",berth:"S5 / 74 / MIDDLE"},
+{sl:3,name:"Ankit Kumar (अंकित कुमार)",dob:"15-08-2011",gender:"Male",mobile:"-",pay:"PAID",pnr:"6836641861",berth:"S5 / 75 / UPPER"},
+{sl:4,name:"Akhilesh Kumar (अखिलेश कुमार)",dob:"14-09-1985",gender:"Male",mobile:"-",pay:"PAID",pnr:"6836641861",berth:"S5 / 77 / MIDDLE"},
+{sl:5,name:"Ankit Kumar (अंकित कुमार)",dob:"10-06-2013",gender:"Male",mobile:"-",pay:"PAID",pnr:"6836641861",berth:"S5 / 78 / UPPER"},
+{sl:6,name:"Bhaumesh Kumar (भौमेश कुमार)",dob:"01-01-2012",gender:"Male",mobile:"-",pay:"PAID",pnr:"6836641861",berth:"S5 / 80 / SIDE UPPER"}]},
+{group:"GROUP 4 (PNR 6408232562)",members:[
+{sl:1,name:"Jawahar Sharma (जवाहर शर्मा)",dob:"01-01-1964",gender:"Male",mobile:"-",pay:"PAID",pnr:"6408232562",berth:"S5 / 34 / MIDDLE"},
+{sl:2,name:"Arun Kumar (अरुण कुमार)",dob:"17-06-1964",gender:"Male",mobile:"-",pay:"PAID",pnr:"6408232562",berth:"S5 / 33 / LOWER"},
+{sl:3,name:"Motilal Sah (मोतीलाल साह)",dob:"01-01-1962",gender:"Male",mobile:"-",pay:"PAID",pnr:"6408232562",berth:"S5 / 35 / UPPER"},
+{sl:4,name:"Motilal Pandit (मोतीलाल पंडित)",dob:"01-01-1989",gender:"Male",mobile:"-",pay:"PAID",pnr:"6408232562",berth:"S5 / 37 / MIDDLE"},
+{sl:5,name:"Nagina Mukhiya (नगीना मुखिया)",dob:"01-01-1962",gender:"Male",mobile:"-",pay:"PAID",pnr:"6408232562",berth:"S5 / 36 / LOWER"},
+{sl:6,name:"Rajan Yadav (राजन यादव)",dob:"12-10-1981",gender:"Male",mobile:"-",pay:"PAID",pnr:"6408232562",berth:"S5 / 38 / UPPER"}]},
+{group:"GROUP 5 (PNR 6408234948)",members:[
+{sl:1,name:"Gayatri Devi (गायत्री देवी)",dob:"01-01-1996",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234948",berth:"S4 / 74 / MIDDLE"},
+{sl:2,name:"Khushbu Kumari (खुशबू कुमारी)",dob:"01-01-2013",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234948",berth:"S4 / 75 / UPPER"},
+{sl:3,name:"Maya Devi (माया देवी)",dob:"01-01-1986",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234948",berth:"S4 / 76 / LOWER"},
+{sl:4,name:"R Kumari (र. कुमारी)",dob:"01-01-2013",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234948",berth:"S4 / 77 / MIDDLE"},
+{sl:5,name:"Sharda Devi (शारदा देवी)",dob:"01-01-1984",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234948",berth:"S4 / 78 / UPPER"},
+{sl:6,name:"Uma Devi (उमा देवी)",dob:"01-01-1963",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234948",berth:"S4 / 73 / LOWER"}]},
+{group:"GROUP 6 (PNR 6708234453)",members:[
+{sl:1,name:"Kunti Devi (कुन्ती देवी)",dob:"01-01-1977",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234453",berth:"S4 / 34 / MIDDLE"},
+{sl:2,name:"Lalmuni Devi (ललमुनी देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234453",berth:"S4 / 35 / UPPER"},
+{sl:3,name:"Prabhawati Devi (प्रभावती देवी)",dob:"01-01-1980",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234453",berth:"S4 / 37 / MIDDLE"},
+{sl:4,name:"Rina Devi (रीना देवी)",dob:"01-01-1989",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234453",berth:"S4 / 38 / UPPER"},
+{sl:5,name:"Rima Devi (रीमा देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234453",berth:"S4 / 40 / SIDE UPPER"},
+{sl:6,name:"Shandhya Kumari (संध्या कुमारी)",dob:"01-01-2010",gender:"Female",mobile:"-",pay:"PAID",pnr:"6708234453",berth:"S4 / 69 / MIDDLE"}]},
+{group:"GROUP 7 (PNR 6408234909)",members:[
+{sl:1,name:"Kunti Devi (कुन्ती देवी)",dob:"01-01-1975",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234909",berth:"S2 / 65 / LOWER"},
+{sl:2,name:"Pratima Devi (प्रतिमा देवी)",dob:"01-01-1994",gender:"Female",mobile:"-",pay:"PAID",pnr:"6408234909",berth:"S2 / 68 / LOWER"}]},
+{group:"GROUP 8 (PNR 6836808413)",members:[
+{sl:1,name:"Lalasa Devi (लालसा देवी)",dob:"01-01-1996",gender:"Female",mobile:"-",pay:"PAID",pnr:"6836808413",berth:"S3 / 77 / MIDDLE"},
+{sl:2,name:"Vijay Pal (विजय पाल)",dob:"01-01-1994",gender:"Male",mobile:"-",pay:"PAID",pnr:"6836808413",berth:"S3 / 78 / UPPER"},
+{sl:3,name:"Sunita Devi (सुनीता देवी)",dob:"01-01-1984",gender:"Female",mobile:"-",pay:"PAID",pnr:"6836808413",berth:"S3 / 80 / SIDE UPPER"}]}
+];
+
+/* ============================================================
+   RETURN DATA — आने का (Train 15274 SATYAGRAH EXP)
+   ============================================================ */
+const returnData = [
+{group:"RETURN 1 (PNR 2523934955)",members:[
+{sl:1,name:"Akhilesh Kumar (अखिलेश कुमार)",dob:"14-09-1985",gender:"Male",mobile:"-",pay:"PAID",pnr:"2523934955",berth:"S5 / 74 / MIDDLE"},
+{sl:2,name:"Ankit Kumar (अंकित कुमार)",dob:"15-08-2011",gender:"Male",mobile:"-",pay:"PAID",pnr:"2523934955",berth:"S5 / 75 / UPPER"},
+{sl:3,name:"Ankit Kumar (अंकित कुमार)",dob:"10-06-2013",gender:"Male",mobile:"-",pay:"PAID",pnr:"2523934955",berth:"S5 / 77 / MIDDLE"},
+{sl:4,name:"Bhaumesh Chandra (भौमेश चन्द्र)",dob:"01-01-2012",gender:"Male",mobile:"-",pay:"PAID",pnr:"2523934955",berth:"S5 / 78 / UPPER"},
+{sl:5,name:"Rambha Devi (रंभा देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523934955",berth:"S5 / 73 / LOWER"},
+{sl:6,name:"Urmila Devi (उर्मिला देवी)",dob:"01-01-1961",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523934955",berth:"S5 / 76 / LOWER"}]},
+{group:"RETURN 2 (PNR 2462024845)",members:[
+{sl:1,name:"Arun Kumar (अरुण कुमार)",dob:"17-06-1964",gender:"Male",mobile:"-",pay:"PAID",pnr:"2462024845",berth:"S4 / 14 / UPPER"},
+{sl:2,name:"Jawahar Sharma (जवाहर शर्मा)",dob:"01-01-1964",gender:"Male",mobile:"-",pay:"PAID",pnr:"2462024845",berth:"S4 / 16 / SIDE UPPER"},
+{sl:3,name:"Motilal Pandit (मोतीलाल पंडित)",dob:"01-01-1989",gender:"Male",mobile:"-",pay:"PAID",pnr:"2462024845",berth:"S4 / 10 / MIDDLE"},
+{sl:4,name:"Motilal Sah (मोतीलाल साह)",dob:"01-01-1962",gender:"Male",mobile:"-",pay:"PAID",pnr:"2462024845",berth:"S4 / 40 / SIDE UPPER"},
+{sl:5,name:"Nagina Mukhiya (नगीना मुखिया)",dob:"01-01-1962",gender:"Male",mobile:"-",pay:"PAID",pnr:"2462024845",berth:"S4 / 13 / MIDDLE"},
+{sl:6,name:"Rajan Yadav (राजन यादव)",dob:"12-10-1981",gender:"Male",mobile:"-",pay:"PAID",pnr:"2462024845",berth:"S4 / 11 / UPPER"}]},
+{group:"RETURN 3 (PNR 2162023502)",members:[
+{sl:1,name:"Geeta Devi (गीता देवी)",dob:"01-01-1994",gender:"Female",mobile:"-",pay:"PAID",pnr:"2162023502",berth:"S1 / 26 / MIDDLE"},
+{sl:2,name:"Kriti Kumari (कृति कुमारी)",dob:"01-01-2007",gender:"Female",mobile:"-",pay:"PAID",pnr:"2162023502",berth:"S1 / 27 / UPPER"},
+{sl:3,name:"Purnima Devi (पूर्णिमा देवी)",dob:"01-01-1998",gender:"Female",mobile:"-",pay:"PAID",pnr:"2162023502",berth:"S1 / 28 / LOWER"},
+{sl:4,name:"Saroj Kumari (सरोज कुमारी)",dob:"01-01-2013",gender:"Female",mobile:"-",pay:"PAID",pnr:"2162023502",berth:"S1 / 29 / MIDDLE"},
+{sl:5,name:"Ujjval Kumar (उज्जवल कुमार)",dob:"01-01-2011",gender:"Male",mobile:"-",pay:"PAID",pnr:"2162023502",berth:"S1 / 30 / UPPER"},
+{sl:6,name:"Yogendra Prasad (योगेन्द्र प्रसाद)",dob:"01-01-1970",gender:"Male",mobile:"-",pay:"PAID",pnr:"2162023502",berth:"S1 / 32 / SIDE UPPER"}]},
+{group:"RETURN 4 (PNR 2742715780)",members:[
+{sl:1,name:"Rakesh Kumar (राकेश कुमार)",dob:"01-01-1998",gender:"Male",mobile:"-",pay:"PAID",pnr:"2742715780",berth:"S1 / 18 / MIDDLE"},
+{sl:2,name:"Rima Devi (रीमा देवी)",dob:"28-03-2001",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742715780",berth:"S1 / 19 / UPPER"},
+{sl:3,name:"Rimjhim Kumari (रिमझिम कुमारी)",dob:"03-03-2009",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742715780",berth:"S1 / 21 / MIDDLE"},
+{sl:4,name:"Rita Devi (रीता देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742715780",berth:"S1 / 22 / UPPER"},
+{sl:5,name:"Sanju Devi (संजू देवी)",dob:"01-01-1990",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742715780",berth:"S1 / 24 / SIDE UPPER"},
+{sl:6,name:"Sharda Devi (शारदा देवी)",dob:"01-01-1991",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742715780",berth:"S1 / 8 / SIDE UPPER"}]},
+{group:"RETURN 5 (PNR 2523936729 — RAC)",members:[
+{sl:1,name:"Gayatri Devi (गायत्री देवी)",dob:"01-01-1996",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523936729",berth:"RAC / 7"},
+{sl:2,name:"Khushboo Kumari (खुशबू कुमारी)",dob:"01-01-2013",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523936729",berth:"RAC / 8"},
+{sl:3,name:"Maya Devi (माया देवी)",dob:"01-01-1986",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523936729",berth:"RAC / 9"},
+{sl:4,name:"Ranju Kumar (रंजू कुमार)",dob:"01-01-2013",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523936729",berth:"RAC / 10"},
+{sl:5,name:"Sharda Devi (शारदा देवी)",dob:"01-01-1984",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523936729",berth:"RAC / 11"},
+{sl:6,name:"Uma Devi (उमा देवी)",dob:"01-01-1963",gender:"Female",mobile:"-",pay:"PAID",pnr:"2523936729",berth:"RAC / 12"}]},
+{group:"RETURN 6 (PNR 2742718509 — WL)",members:[
+{sl:1,name:"Prabhawati Devi (प्रभावती देवी)",dob:"01-01-1980",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742718509",berth:"WL / NA / 22"},
+{sl:2,name:"Sabdhya Kumari (सबध्या कुमारी)",dob:"01-01-2010",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742718509",berth:"WL / NA / 23"},
+{sl:3,name:"Kunti Devi (कुन्ती देवी)",dob:"01-01-1977",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742718509",berth:"WL / NA / 24"},
+{sl:4,name:"Lalmuni Devi (ललमुनी देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742718509",berth:"WL / NA / 25"},
+{sl:5,name:"Rima Devi (रीमा देवी)",dob:"01-01-1974",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742718509",berth:"WL / NA / 26"},
+{sl:6,name:"Reena Devi (रीना देवी)",dob:"01-01-1989",gender:"Female",mobile:"-",pay:"PAID",pnr:"2742718509",berth:"WL / NA / 27"}]},
+{group:"RETURN 7 (PNR 2623937472 — WL)",members:[
+{sl:1,name:"Kunti Devi (कुन्ती देवी)",dob:"01-01-1975",gender:"Female",mobile:"-",pay:"PAID",pnr:"2623937472",berth:"WL / 4"},
+{sl:2,name:"Lalsa Devi (लालसा देवी)",dob:"01-01-1996",gender:"Female",mobile:"-",pay:"PAID",pnr:"2623937472",berth:"WL / 5"},
+{sl:3,name:"Pratima Devi (प्रतिमा देवी)",dob:"01-01-1994",gender:"Female",mobile:"-",pay:"PAID",pnr:"2623937472",berth:"WL / 6"},
+{sl:4,name:"Vijay Pal (विजय पाल)",dob:"01-01-1994",gender:"Male",mobile:"-",pay:"PAID",pnr:"2623937472",berth:"WL / 7"},
+{sl:5,name:"Sunita Devi (सुनीता देवी)",dob:"01-01-1984",gender:"Female",mobile:"-",pay:"PAID",pnr:"2623937472",berth:"WL / 8"}]}
+];
+  /* ============================================================
+   AGE CALCULATE — DOB से automatic
+   ============================================================ */
+function calculateAge(dobStr){
+  if(!dobStr || dobStr === "-") return "-";
+  const parts = String(dobStr).split("-");
+  if(parts.length !== 3) return "-";
+  const day = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1;
+  const year = parseInt(parts[2]);
+  if(isNaN(day) || isNaN(month) || isNaN(year)) return "-";
+  const dob = new Date(year, month, day);
+  if(isNaN(dob.getTime())) return "-";
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if(m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  if(age < 0) return "-";
+  return age + " Y";
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function esc(v){
+  return String(v ?? "-").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function setStatus(text, online=true){
+  const e = document.getElementById("syncStatus");
+  if(!e) return;
+  e.textContent = text;
+  e.className = "status-bar " + (online ? "status-online" : "status-offline");
+  const lu = document.getElementById("lastUpdated");
+  if(lu && online){
+    const now = new Date();
+    const time = now.toLocaleTimeString("hi-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    lu.textContent = "Last updated: " + time;
+  }
+}
+function formatPaymentBadge(text){
+  if(!text || text === "-") return "-";
+  const t = String(text);
+  if(t.toUpperCase() === "PAID") return '<span class="badge-paid">PAID</span>';
+  if(/DUE/i.test(t)) return '<span class="badge-due">' + esc(t) + '</span>';
+  return '<span class="badge-paid">' + esc(t) + '</span>';
+}
+function formatBerthBadge(text){
+  if(!text || text === "-") return "-";
+  const t = String(text).toUpperCase();
+  if(t.includes("RAC")) return '<span class="badge-rac">' + esc(text) + '</span>';
+  if(t.includes("WL")) return '<span class="badge-wl">' + esc(text) + '</span>';
+  return '<span class="badge-berth">' + esc(text) + '</span>';
+}
+function maskMobile(m){
+  if(!m || m === "-") return "-";
+  const s = String(m);
+  return "••••••" + s.slice(-4);
+}
+function getGroupSummary(grp){
+  const members = grp.members || [];
+  const total = members.length;
+  let paid = 0, due = 0, dueAmount = 0;
+  members.forEach(m => {
+    const p = String(m.pay || "").toUpperCase();
+    if(p.includes("DUE")){
+      due++;
+      const match = p.match(/₹\s*(\d+)/);
+      if(match) dueAmount += Number(match[1]);
+    } else if(p.includes("PAID")){
+      paid++;
+    }
+  });
+  let text = total + " Members";
+  if(paid) text += " • " + paid + " PAID";
+  if(due)  text += " • " + due + " DUE";
+  if(dueAmount) text += " (₹" + dueAmount + ")";
+  if(paid === total && total > 0) text = "ALL PAID • " + total + " Members";
+  return text;
+}
+
+/* ============================================================
+   VALIDATORS
+   ============================================================ */
+const VALIDATORS = {
+  pnr: {test: v => v === "-" || /^\d{10}$/.test(v), msg: "PNR 10 अंकों का होना चाहिए"},
+  mobile: {test: v => v === "-" || /^\+91\d{10}$/.test(v), msg: "Mobile format: +91XXXXXXXXXX"},
+  dob: {test: v => v === "-" || /^\d{2}-\d{2}-\d{4}$/.test(v), msg: "DOB format: DD-MM-YYYY"},
+  gender: {test: v => v === "-" || ["Male","Female","Other"].includes(v), msg: "Gender: Male/Female/Other"}
+};
+
+function validateCell(cell){
+  const field = cell.dataset.field;
+  const rule = VALIDATORS[field];
+  if(!rule) return true;
+  const val = cell.innerText.trim() || "-";
+  if(!rule.test(val)){ cell.style.background = "#ffd6d6"; cell.title = rule.msg; return false; }
+  cell.style.background = ""; cell.title = "";
+  return true;
+}
+function hasInvalidCells(){
+  if(!isEditMode) return false;
+  const cells = document.querySelectorAll('td[data-editable="true"]');
+  const invalid = [];
+  cells.forEach(c => { if(!validateCell(c)) invalid.push(c); });
+  return invalid;
+}
+
+/* ============================================================
+   TAB SWITCH
+   ============================================================ */
+function switchTab(tab){
+  activeTab = tab;
+  const btnGoing = document.getElementById("tabGoing");
+  const btnReturn = document.getElementById("tabReturn");
+  const goingBar = document.getElementById("goingTrainBar");
+  const returnBar = document.getElementById("returnTrainBar");
+
+  btnGoing.classList.remove("active-going","active-return");
+  btnReturn.classList.remove("active-going","active-return");
+
+  if(tab === "going"){
+    btnGoing.classList.add("active-going");
+    goingBar.classList.remove("hidden");
+    returnBar.classList.add("hidden");
+  } else {
+    btnReturn.classList.add("active-return");
+    goingBar.classList.add("hidden");
+    returnBar.classList.remove("hidden");
+  }
+  renderTables();
+}
+
+/* ============================================================
+   RENDER TABLES
+   ============================================================ */
+function renderTables(){
+  const loader = document.getElementById("loadingIndicator");
+  if(loader) loader.style.display = "none";
+
+  const container = document.getElementById("groupsContainer");
+  container.innerHTML = "";
+
+  const data = activeTab === "going" ? currentData.going : currentData.return;
+  const isReturn = activeTab === "return";
+
+  data.forEach((grp, gIndex)=>{
+    let h = '<div class="group-card' + (isReturn ? ' return-card' : '') + '" id="card-' + gIndex + '">' +
+      '<div class="group-header">' +
+        '<span>' + esc(grp.group) + '</span>' +
+        '<span>[' + esc(getGroupSummary(grp)) + ']</span>' +
+      '</div>' +
+      '<div class="table-container"><table><thead><tr>' +
+      '<th style="width:24px">Sl.</th><th>NAME (नाम)</th><th>DOB</th><th>GENDER</th><th>AGE</th>' +
+      '<th>MOBILE NO.</th><th>PAYMENT</th><th>PNR</th><th>SEAT / BERTH</th>' +
+      '</tr></thead><tbody>';
+
+    (grp.members || []).forEach((m, mIndex)=>{
+      const paid = String(m.pay || "").toUpperCase().includes("PAID") && !/DUE/i.test(String(m.pay || ""));
+      h += '<tr class="' + (paid ? "row-green" : "") + '" data-g="' + gIndex + '" data-m="' + mIndex + '">' +
+        '<td>' + esc(m.sl) + '</td>' +
+        '<td class="name-col" data-editable="true" data-field="name">' + esc(m.name) + '</td>' +
+        '<td data-editable="true" data-field="dob">' + esc(m.dob) + '</td>' +
+        '<td data-editable="true" data-field="gender">' + esc(m.gender) + '</td>' +
+        '<td>' + calculateAge(m.dob) + '</td>' +
+        '<td data-editable="true" data-field="mobile">' + (isEditMode ? esc(m.mobile) : maskMobile(m.mobile)) + '</td>' +
+        '<td data-editable="true" data-field="pay">' + (isEditMode ? esc(m.pay === "-" ? "" : m.pay) : formatPaymentBadge(m.pay)) + '</td>' +
+        '<td data-editable="true" data-field="pnr" class="pnr-cell" data-g="' + gIndex + '" data-m="' + mIndex + '">' +
+          (isEditMode ? esc(m.pnr === "-" ? "" : m.pnr) : (String(m.pnr || "").trim() && String(m.pnr).trim() !== "-" ? '<span class="pnr-link">' + esc(m.pnr) + '</span>' : esc(m.pnr))) +
+        '</td>' +
+        '<td data-editable="true" data-field="berth">' + (isEditMode ? esc(m.berth === "-" ? "" : m.berth) : formatBerthBadge(m.berth)) + '</td>' +
+        '</tr>';
+    });
+    h += "</tbody></table></div></div>";
+    container.insertAdjacentHTML("beforeend", h);
+  });
+
+  applyEditModeClasses();
+  setupPnrPdfLinks();
+  filterTable();
+}
+  /* ============================================================
+   PDF GENERATOR
+   ============================================================ */
+function pdfSafeText(value){
+  return String(value ?? "-").replace(/\r?\n/g," ").replace(/[^\x20-\x7E]/g,"").replace(/[()\\]/g," ").trim() || "-";
+}
+function pdfEscape(value){
+  return pdfSafeText(value).replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)");
+}
+function makeTicketPdf(member, groupName, tabName){
+  const age = calculateAge(member.dob);
+  const trainLine = tabName === "going"
+    ? "Train: 12557 / SAPT KRANTI EXP | BETTIAH -> ANAND VIHAR"
+    : "Train: 15274 / SATYAGRAH EXP | ANAND VIHAR -> BETTIAH";
+  const dateLine = tabName === "going"
+    ? "Journey Date: 18-Oct-2026"
+    : "Journey Date: 28-Oct-2026";
+  const lines = [
+    "NIRANKARI SANT SAMAGAM TICKET",
+    tabName === "going" ? "GOING JOURNEY" : "RETURN JOURNEY",
+    "----------------------------------------",
+    trainLine,
+    dateLine,
+    "----------------------------------------",
+    "Group      : " + groupName,
+    "Name       : " + member.name,
+    "DOB        : " + member.dob,
+    "Age        : " + age,
+    "Gender     : " + member.gender,
+    "Mobile No. : " + member.mobile,
+    "Payment    : " + member.pay,
+    "PNR        : " + member.pnr,
+    "Coach/Berth: " + member.berth,
+    "----------------------------------------",
+    "Please carry this ticket for the Samagam journey."
+  ];
+  const content = ["BT","/F1 14 Tf","50 780 Td"];
+  lines.forEach((line, i) => {
+    if(i > 0) content.push("0 -22 Td");
+    content.push("(" + pdfEscape(line) + ") Tj");
+  });
+  content.push("ET");
+  const stream = content.join("\\n");
+  const objs = [];
+  objs.push("1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj\\n");
+  objs.push("2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj\\n");
+  objs.push("3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>endobj\\n");
+  objs.push("4 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj\\n");
+  objs.push("5 0 obj<< /Length " + stream.length + " >>stream\\n" + stream + "\\nendstream endobj\\n");
+  let pdf = "%PDF-1.4\\n%\\xE2\\xE3\\xCF\\xD3\\n";
+  const offsets = [0];
+  objs.forEach(o => { offsets.push(pdf.length); pdf += o; });
+  const xref = pdf.length;
+  pdf += "xref\\n0 " + (objs.length + 1) + "\\n0000000000 65535 f \\n";
+  for(let i = 1; i < offsets.length; i++) pdf += String(offsets[i]).padStart(10,"0") + " 00000 n \\n";
+  pdf += "trailer<< /Size " + (objs.length + 1) + " /Root 1 0 R >>\\nstartxref\\n" + xref + "\\n%%EOF";
+  return new Blob([pdf], {type:"application/pdf"});
+}
+
+function openTicketPDF(gIndex, mIndex){
+  if(isEditMode) return;
+  const data = activeTab === "going" ? currentData.going : currentData.return;
+  const grp = data[gIndex];
+  const member = grp && grp.members && grp.members[mIndex];
+  if(!member || !member.pnr || member.pnr === "-"){
+    alert("इस member का PNR नहीं है — PDF नहीं बन सकती।");
+    return;
+  }
+  try{
+    const blob = makeTicketPdf(member, grp.group || "GROUP", activeTab);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const prefix = activeTab === "going" ? "Going" : "Return";
+    a.href = url;
+    a.download = prefix + "_Ticket_" + (member.pnr || "ticket") + ".pdf";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), URL_REVOKE_DELAY_MS);
+  } catch(err){
+    console.error(err);
+    alert("PDF बनाने में दिक्कत आई।\n" + (err.message || err));
+  }
+}
+
+function setupPnrPdfLinks(){
+  document.querySelectorAll(".pnr-cell").forEach(cell => {
+    cell.onclick = function(e){
+      if(isEditMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      openTicketPDF(Number(this.dataset.g), Number(this.dataset.m));
+    };
+  });
+}
+
+/* ============================================================
+   EDIT MODE
+   ============================================================ */
+function applyEditModeClasses(){
+  const cells = document.querySelectorAll('td[data-editable="true"]');
+  document.body.classList.toggle("edit-mode-active", isEditMode);
+  cells.forEach(cell => {
+    cell.contentEditable = isEditMode ? "true" : "false";
+    if(isEditMode){
+      cell.onfocus = function(){ if(this.innerText.trim() === "-") this.innerText = ""; };
+      cell.onblur = function(){ if(this.innerText.trim() === "") this.innerText = "-"; validateCell(this); };
+      cell.oninput = function(){ validateCell(this); };
+    } else {
+      cell.onfocus = cell.onblur = cell.oninput = null;
+      cell.style.background = "";
+      cell.title = "";
+    }
+  });
+}
+
+function collectEditedData(){
+  const data = activeTab === "going" ? currentData.going : currentData.return;
+  document.querySelectorAll("tbody tr").forEach(tr => {
+    const g = Number(tr.dataset.g), m = Number(tr.dataset.m);
+    if(isNaN(g) || isNaN(m)) return;
+    if(!data[g] || !data[g].members[m]) return;
+    tr.querySelectorAll("[data-editable=true]").forEach(td => {
+      const field = td.dataset.field;
+      let val = td.innerText.trim();
+      if(!val) val = "-";
+      data[g].members[m][field] = val;
+    });
+  });
+}
+
+function pushUndoSnapshot(){
+  undoStack.push(JSON.stringify(currentData));
+  if(undoStack.length > 50) undoStack.shift();
+  redoStack = [];
+}
+function undoEdit(){
+  if(!isEditMode || !undoStack.length) return;
+  redoStack.push(JSON.stringify(currentData));
+  currentData = JSON.parse(undoStack.pop());
+  renderTables();
+}
+function redoEdit(){
+  if(!isEditMode || !redoStack.length) return;
+  undoStack.push(JSON.stringify(currentData));
+  currentData = JSON.parse(redoStack.pop());
+  renderTables();
+}
+
+/* ============================================================
+   AUTH — Firebase Login
+   ============================================================ */
+async function getValidIdToken(){
+  if(!authSession || !authSession.idToken) return null;
+  if(Date.now() < Number(authSession.expiresAt||0) - TOKEN_EXPIRY_BUFFER_MS) return authSession.idToken;
+  if(!authSession.refreshToken) return null;
+  try{
+    const r = await fetch(AUTH_REFRESH_URL, {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:"grant_type=refresh_token&refresh_token=" + encodeURIComponent(authSession.refreshToken)});
+    const d = await r.json();
+    if(!r.ok) throw new Error(d?.error?.message || "Token refresh failed");
+    authSession.idToken = d.id_token;
+    authSession.refreshToken = d.refresh_token || authSession.refreshToken;
+    authSession.expiresAt = Date.now() + Number(d.expires_in || 3600) * 1000;
+    localStorage.setItem("nirankari_auth_session", JSON.stringify(authSession));
+    currentUser = {email: authSession.email, uid: authSession.localId};
+    return authSession.idToken;
+  }catch(e){ console.warn(e); return null; }
+}
+
+const AUTH_ERROR_MESSAGES = {
+  "EMAIL_NOT_FOUND": "यह email registered नहीं है",
+  "INVALID_PASSWORD": "Password गलत है",
+  "INVALID_LOGIN_CREDENTIALS": "Email या Password गलत है",
+  "USER_DISABLED": "यह account disabled है",
+  "TOO_MANY_ATTEMPTS_TRY_LATER": "बहुत बार गलत try किया, कुछ देर बाद करें",
+  "INVALID_EMAIL": "Email का format गलत है",
+  "MISSING_PASSWORD": "Password भरें"
+};
+function friendlyAuthError(msg){
+  if(!msg) return "Login failed. दोबारा try करें।";
+  const code = String(msg).split(" ")[0];
+  return AUTH_ERROR_MESSAGES[code] || "Login failed: " + msg;
+}
+
+function togglePassword(){
+  const pwd = document.getElementById("password");
+  const btn = document.getElementById("togglePwdBtn");
+  if(!pwd || !btn) return;
+  if(pwd.type === "password"){
+    pwd.type = "text";
+    btn.textContent = "🙈";
+    btn.title = "Hide password";
+  } else {
+    pwd.type = "password";
+    btn.textContent = "👁️";
+    btn.title = "Show password";
+  }
+}
+
+async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("loginMsg");
+  if(!email || !password){ msg.style.color="#b71515"; msg.textContent="Email और password भरें."; return; }
+  msg.style.color = "#666";
+  msg.textContent = "Login हो रहा है...";
+  try{
+    const r = await fetch(AUTH_SIGNIN_URL, {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({email, password, returnSecureToken:true})});
+    const d = await r.json();
+    if(!r.ok) throw new Error(d?.error?.message || "Login failed");
+    authSession = {
+      email: d.email, localId: d.localId,
+      idToken: d.idToken, refreshToken: d.refreshToken,
+      expiresAt: Date.now() + Number(d.expiresIn || 3600) * 1000
+    };
+    localStorage.setItem("nirankari_auth_session", JSON.stringify(authSession));
+    currentUser = {email: d.email, uid: d.localId};
+    document.getElementById("loginOverlay").classList.add("hidden");
+    document.getElementById("modeStatus").textContent = "✏️ ADMIN MODE";
+    document.getElementById("password").value = "";
+    document.getElementById("password").type = "password";
+    document.getElementById("togglePwdBtn").textContent = "👁️";
+    msg.textContent = "";
+    // अब edit mode में जाओ
+    startEditMode();
+  }catch(e){
+    console.error(e);
+    msg.style.color = "#b71515";
+    msg.textContent = friendlyAuthError(e.message);
+  }
+}
+
+function closeLogin(){
+  document.getElementById("loginOverlay").classList.add("hidden");
+  document.getElementById("loginMsg").textContent = "";
+  document.getElementById("password").value = "";
+  document.getElementById("password").type = "password";
+  document.getElementById("togglePwdBtn").textContent = "👁️";
+}
+
+/* ============================================================
+   SAVE to Firebase
+   ============================================================ */
+async function saveData(){
+  collectEditedData();
+  const invalid = hasInvalidCells();
+  if(invalid && invalid.length){
+    alert("कुछ cells में गलत format है (लाल background वाले).\nपहले उन्हें ठीक करें।");
+    invalid[0].scrollIntoView({behavior:"smooth", block:"center"});
+    return false;
+  }
+  const token = await getValidIdToken();
+  if(!token){
+    setStatus("Login required to save", false);
+    return false;
+  }
+  try{
+    setStatus("Saving to Firebase...", true);
+    const baseUrl = FIREBASE_DB_URL;
+    const goingResults = await Promise.all(
+      currentData.going.map((grp, i) =>
+        fetch(baseUrl + "/tickets/" + i + ".json?auth=" + encodeURIComponent(token), {
+          method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(grp)
+        })
+      )
+    );
+    const returnResults = await Promise.all(
+      currentData.return.map((grp, i) =>
+        fetch(baseUrl + "/return-tickets/" + i + ".json?auth=" + encodeURIComponent(token), {
+          method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(grp)
+        })
+      )
+    );
+    for(const r of [...goingResults, ...returnResults]){
+      if(!r.ok){
+        const d = await r.json().catch(()=>({}));
+        throw new Error(d?.error || "Firebase save failed");
+      }
+    }
+    setStatus("✓ Firebase Saved", true);
+    return true;
+  }catch(e){
+    console.error(e);
+    setStatus("Firebase save failed", false);
+    alert("Firebase save failed.\n\n" + (e.message || e));
+    return false;
+  }
+}
+
+/* ============================================================
+   EDIT MODE TOGGLE (with login)
+   ============================================================ */
+function toggleGlobalEdit(){
+  const btn = document.getElementById("globalEditBtn");
+  if(!currentUser){
+    // Login box खोलो
+    document.getElementById("loginOverlay").classList.remove("hidden");
+    document.getElementById("email").focus();
+    return;
+  }
+  if(!isEditMode){
+    startEditMode();
+  }else{
+    // Save and exit
+    const ok = saveData();
+    if(ok && ok.then){
+      ok.then(res => { if(res !== false) finishEditMode(); });
+    } else if(ok !== false){
+      finishEditMode();
+    }
+  }
+}
+
+function startEditMode(){
+  if(isEditMode) return;
+  pushUndoSnapshot();
+  isEditMode = true;
+  const btn = document.getElementById("globalEditBtn");
+  btn.innerText = "💾";
+  btn.title = "Save";
+  btn.classList.add("saving");
+  document.getElementById("modeStatus").textContent = "✏️ EDIT MODE — ADMIN";
+  renderTables();
+}
+
+function finishEditMode(){
+  isEditMode = false;
+  const btn = document.getElementById("globalEditBtn");
+  if(btn){
+    btn.innerText = "✏️";
+    btn.title = "Edit Mode";
+    btn.classList.remove("saving");
+  }
+  document.getElementById("modeStatus").textContent = "👁️ VIEW MODE";
+  undoStack = [];
+  redoStack = [];
+  renderTables();
+}
+
+/* ============================================================
+   FILTER
+   ============================================================ */
+function setFilter(filter, btn){
+  activeFilter = filter;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active-filter"));
+  if(btn) btn.classList.add("active-filter");
+  filterTable();
+}
+function rowMatchesFilter(row){
+  if(activeFilter === "ALL") return true;
+  const g = Number(row.dataset.g), m = Number(row.dataset.m);
+  const data = activeTab === "going" ? currentData.going : currentData.return;
+  const member = data[g] && data[g].members[m];
+  if(!member) return false;
+  const pay = String(member.pay || "").toUpperCase();
+  const pnr = String(member.pnr || "").trim();
+  const berth = String(member.berth || "").trim();
+  if(activeFilter === "PAID") return pay.includes("PAID") && !pay.includes("DUE");
+  if(activeFilter === "DUE") return pay.includes("DUE");
+  if(activeFilter === "PNR") return pnr && pnr !== "-";
+  if(activeFilter === "BERTH") return berth && berth !== "-";
+  if(activeFilter === "EMPTY") return [member.dob, member.mobile, member.pnr, member.berth].some(v => !v || v === "-");
+  return true;
+}
+
+/* ============================================================
+   SEARCH with highlight
+   ============================================================ */
+function clearHighlights(){
+  document.querySelectorAll("mark.search-hl").forEach(m => {
+    const parent = m.parentNode;
+    parent.replaceChild(document.createTextNode(m.textContent), m);
+    parent.normalize();
+  });
+}
+function highlightRow(row, query){
+  if(!query || isEditMode) return;
+  const walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => {
+      if(!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      if(n.parentNode.tagName === "MARK") return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const textNodes = [];
+  while(walker.nextNode()) textNodes.push(walker.currentNode);
+  const safeQ = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  textNodes.forEach(node => {
+    const text = node.nodeValue;
+    const re = new RegExp("(" + safeQ + ")", "gi");
+    if(!re.test(text)) return;
+    re.lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let last = 0, m;
+    while((m = re.exec(text)) !== null){
+      if(m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      const mark = document.createElement("mark");
+      mark.className = "search-hl";
+      mark.textContent = m[0];
+      frag.appendChild(mark);
+      last = m.index + m[0].length;
+      if(m.index === re.lastIndex) re.lastIndex++;
+    }
+    if(last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+function filterTable(){
+  const q = document.getElementById("searchBar").value.toLowerCase().trim();
+  clearHighlights();
+  document.querySelectorAll(".group-card").forEach(card => {
+    let match = false;
+    card.querySelectorAll("tbody tr").forEach(row => {
+      const ok = row.innerText.toLowerCase().includes(q) && rowMatchesFilter(row);
+      row.style.display = ok ? "" : "none";
+      if(ok){ match = true; if(q) highlightRow(row, q); }
+    });
+    card.style.display = match ? "" : "none";
+  });
+}
+function toggleSearch(force){
+  const c = document.getElementById("searchContainer"), i = document.getElementById("searchBar");
+  const open = force !== undefined ? force : !c.classList.contains("active");
+  if(open){ c.classList.add("active"); i.focus(); }
+  else { c.classList.remove("active"); i.value = ""; filterTable(); }
+}
+
+/* ============================================================
+   FIREBASE SYNC
+   ============================================================ */
+async function startFirebaseSync(){
+  if(firebaseReady) return;
+  firebaseReady = true;
+
+  const sync = async () => {
+    if(isEditMode) return;
+    try{
+      const rG = await fetch(FIREBASE_DB_URL + "/tickets.json", {cache:"no-store"});
+      const rR = await fetch(FIREBASE_DB_URL + "/return-tickets.json", {cache:"no-store"});
+      if(!rG.ok) throw new Error("HTTP " + rG.status);
+      if(!rR.ok) throw new Error("HTTP " + rR.status);
+      const dataGoing = await rG.json();
+      const dataReturn = await rR.json();
+
+      function normalize(data){
+        if(data === null || data === undefined) return null;
+        if(Array.isArray(data)) return data;
+        if(typeof data === "object")
+          return Object.keys(data).sort((x,y)=>Number(x)-Number(y)).map(k=>data[k]);
+        return null;
+      }
+
+      const gArr = normalize(dataGoing);
+      const rArr = normalize(dataReturn);
+
+      if(gArr && gArr.length) currentData.going = gArr;
+      else currentData.going = JSON.parse(JSON.stringify(goingData));
+
+      if(rArr && rArr.length) currentData.return = rArr;
+      else currentData.return = JSON.parse(JSON.stringify(returnData));
+
+      const newJSON = JSON.stringify(currentData);
+      if(newJSON !== lastRenderedJSON || lastRenderedJSON === ""){
+        lastRenderedJSON = newJSON;
+        renderTables();
+      }
+      setStatus("✓ Firebase synced", true);
+    }catch(e){
+      console.error(e);
+      if(!currentData.going.length){
+        currentData.going = JSON.parse(JSON.stringify(goingData));
+      }
+      if(!currentData.return.length){
+        currentData.return = JSON.parse(JSON.stringify(returnData));
+      }
+      renderTables();
+      setStatus("Connection issue — cached data shown", false);
+    }
+  };
+
+  sync();
+  clearInterval(syncTimer);
+  syncTimer = setInterval(sync, SYNC_INTERVAL_MS);
+}
+
+/* ============================================================
+   SESSION RESTORE
+   ============================================================ */
+function restoreSession(){
+  // हर बार page खुलने पर VIEW MODE
+  currentUser = null;
+  authSession = null;
+  localStorage.removeItem("nirankari_auth_session");
+  isEditMode = false;
+  document.getElementById("globalEditBtn").innerText = "✏️";
+  document.getElementById("globalEditBtn").classList.remove("saving");
+  document.getElementById("modeStatus").textContent = "👁️ VIEW MODE";
+}
+
+/* ============================================================
+   OFFLINE BANNER
+   ============================================================ */
+function showOfflineBanner(){ document.getElementById("offlineBanner").classList.remove("hidden"); }
+function hideOfflineBanner(){ document.getElementById("offlineBanner").classList.add("hidden"); }
+
+window.addEventListener("offline", () => {
+  setStatus("Offline — cached data", false);
+  showOfflineBanner();
+});
+window.addEventListener("online", () => {
+  setStatus("Internet back", true);
+  hideOfflineBanner();
+  if(firebaseReady){
+    clearInterval(syncTimer);
+    syncTimer = null;
+    firebaseReady = false;
+    startFirebaseSync();
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderTables();
+restoreSession();
+startFirebaseSync();
+
+if(!navigator.onLine) showOfflineBanner();
+</script>
+</body>
+</html>
